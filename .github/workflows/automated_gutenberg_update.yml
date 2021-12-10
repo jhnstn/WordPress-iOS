@@ -36,7 +36,9 @@ jobs:
         run: |
           sha_or_url=${{ github.event.inputs.gutenbergMobileShaOrPrUrl}}
           if [[ $sha_or_url =~ '^https://github.com' ]] ;then
-            gbm_sha=$(gh api repos/${sha_or_url#https://github.com/} --jq '.head.sha')
+            api_path=$( echo $sha_or_url | sed -E 's/https:\/\/github.com\/(.*)pull([0-9]*)/\1pulls\2' )
+            gbm_sha=$(gh api repos/$api_path  --jq '.head.sha')
+            echo ::set-output name=gbm_pr_url::$sha_or_url
           else
             gbm_sha=$(echo $sha_or_url | xargs)
           fi
@@ -53,24 +55,26 @@ jobs:
           gbm_sha=${{ steps.gbm_pr.outputs.gbm_sha }}
           sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile
 
-      - name: Install Gems and Pods
-        id: bundle
-        run: |
-          bundle install && bundle exec pod install
-          echo ::set-output name=didChange::$(git diff --exit-code && echo "false" || echo "true")
+      # - name: Install Gems and Pods
+      #   id: bundle
+      #   run: |
+      #     bundle install && bundle exec pod install
+      #     echo ::set-output name=didChange::$(git diff --exit-code && echo "false" || echo "true")
 
       - name: Push Changes and Create Pull Request
+        id: ios_pr
         if: ${{ steps.bundle.outputs.didChange == 'true' }}
         run: |
-          git commit -am "Update Gutenberg to $GBM_SHA" && git push origin $HEAD
-          gh pr create \
+          git commit -am "Update Gutenberg to ${{steps.gbm_pr.outputs.gbm_sha}}" && git push origin $HEAD
+          pr_url=$(gh pr create \
           --title "${{ github.event.inputs.prTitle }}" \
-          --body "${{ github.event.inputs.prBody }}" \
-          --base "${{ github.event.inputs.baseBranch }}" || true
+          --body "${{ github.event.inputs.prBody }}" \\
+          --base "${{ github.event.inputs.baseBranch }}" | tail -1)
+          echo ::set-output name=url::$url
 
       - name: Update Mobile Gutenberg PR
-        if: ${{ github.event.inputs.gutenbergMobilePR }}
+        if: ${{ steps.ios_pr.outputs.url && steps.gbm_pr.outputs.url }}
         run: |
-
+          gh pr comment ${{ steps.gbm_pr.outputs.url }} --body "Sychronized iOS PR \n ${{ steps.ios_pr.outputs.url }}"
         env:
           GITHUB_TOKEN: ${{ secrets.WORDPRESS_MOBILE_GITHUB_TOKEN }}
