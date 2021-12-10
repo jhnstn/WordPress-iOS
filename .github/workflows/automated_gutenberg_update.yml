@@ -43,4 +43,7 @@ jobs:
       - name: Push Changes and Create Pull Request
         run: |
           git commit -am "Update Gutenberg to $GBM_SHA" && git push origin $HEAD
-          gh pr create -t "${{ github.event.inputs.prTitle }}" -b "${{ github.event.inputs.baseBranch }}" -m "${{ github.event.inputs.prBody }}" || true
+          gh pr create \
+          --title "${{ github.event.inputs.prTitle }}" \
+          --body "${{ github.event.inputs.prBody }}" \
+          --base "${{ github.event.inputs.baseBranch }}" || true
