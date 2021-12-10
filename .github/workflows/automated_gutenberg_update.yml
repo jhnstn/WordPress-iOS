@@ -35,6 +35,7 @@ jobs:
         id: gbm_pr
         run: |
           sha_or_url=${{ github.event.inputs.gutenbergMobileShaOrPrUrl}}
+          echo $sha_or_url
           if [[ $sha_or_url =~ '^https://github.com' ]] ;then
             api_path=$( echo $sha_or_url | sed -E 's/https:\/\/github.com\/(.*)pull([0-9]*)/\1pulls\2' )
             gbm_sha=$(gh api repos/$api_path  --jq '.head.sha')
@@ -42,6 +43,7 @@ jobs:
           else
             gbm_sha=$(echo $sha_or_url | xargs)
           fi
+          echo $gbm_sha
           echo ::set-output name=gbm_sha::$gbm_sha
         env:
           GITHUB_TOKEN: ${{ secrets.WORDPRESS_MOBILE_GITHUB_TOKEN }}
