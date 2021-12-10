@@ -40,12 +40,7 @@ jobs:
       - name: Install Gems and Pods
         run: bundle install && bundle exec pod install
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          commit-message: "Update Gutenberg Mobile to $GBM_SHA"
-          title: ${{ github.event.inputs.prTitle }}
-          body: ${{ github.event.inputs.prBody }}
-          branch: ${{ github.event.inputs.headBranch }}
-          base: ${{ github.event.inputs.baseBranch }}
-          delete-branch: true
+      - name: Push Changes and Create Pull Request
+        run: |
+          git commit -am "Update Gutenberg to $GBM_SHA" && git push origin $HEAD
+          gh pr create -t "${{ github.event.inputs.prTitle }}" -b "${{ github.event.inputs.baseBranch }}" -m "${{ github.event.inputs.prBody }}" || true
