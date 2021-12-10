@@ -1,0 +1,105 @@
+# OS X
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Xcode
+*/build/*
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+profile
+*.moved-aside
+DerivedData
+.idea/
+*.hmap
+*.xcscmblueprint
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Subversion
+.svn/
+
+# Project
+/Entitlements.plist
+Pods/
+WordPress.xcworkspace/*.mode1v3
+WordPress.xcworkspace/*.mode2v3
+WordPress.xcworkspace/*.pbxuser
+WordPress.xcworkspace/*.perspectivev3
+WordPress.xcworkspace/*.xcuserdata
+WordPress.xcworkspace/project.xcworkspace
+WordPress.xcworkspace/xcuserdata
+WordPress.xcworkspace/xcshareddata/WordPress.xccheckout
+WordPress/Entitlements.plist
+WordPress/WordPress.xcodeproj/*.mode1v3
+WordPress/WordPress.xcodeproj/*.mode2v3
+WordPress/WordPress.xcodeproj/*.pbxuser
+WordPress/WordPress.xcodeproj/*.perspectivev3
+WordPress/WordPress.xcodeproj/project.xcworkspace
+WordPress/WordPress.xcodeproj/xcuserdata
+/build
+.hockey_app_credentials
+WordPress/InfoPlist.h
+WordPress/InfoPlist-alpha.h
+WordPress/InfoPlist-internal.h
+WordPress/Derived Sources/
+# coverage.py
+*/CoverageData/*
+WordPress/Images.xcassets/AppIcon-Internal.appiconset
+
+# Dependencies
+vendor
+
+# Fastlane
+fastlane/Preview.html
+fastlane/report.xml
+fastlane/README.md
+Preview.html
+fastlane/test_output/
+fastlane/google_cloud_keys.json
+fastlane/screenshots
+fastlane/jetpack_screenshots
+fastlane/promo_screenshots
+fastlane/jetpack_promo_screenshots
+fastlane/metadata/review_information
+default.profraw
+derived-data/
+
+# Fastlane former location
+Scripts/fastlane/
+
+# CI Artifacts Location
+Artifacts
+
+# Generated Internal Icons
+WordPress/Resources/AppImages.xcassets/AppIcon-Internal.appiconset
+WordPress/Resources/Icons-Internal
+
+# All encrypted secrets should be stored under .configure-files
+# Everything without a .enc extension is ignored
+.configure-files/*
+!.configure-files/*.enc
+
+# A file external contributors can have locally to provide their own credentials.
+# This file is created during the `rake init:oss` task, based on the Secrets-example.swift file.
+WordPress/Credentials/Secrets.swift
+
+# Ignoring old locations to be sure they aren't commited accidentally
+WordPress/Credentials/wpcom_app_credentials
+WordPress/Credentials/wpcom_alpha_app_credentials
+WordPress/Credentials/wpcom_internal_app_credentials
