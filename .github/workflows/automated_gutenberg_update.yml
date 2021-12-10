@@ -41,7 +41,11 @@ jobs:
         run: |
           sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$GBM_SHA'/" Podfile
           # Exit if there are no changes
-           echo ::set-output name=didChange::$(git diff --exit-code --quiet && echo true || echo false)
+          did_change=$(git diff --exit-code --quiet && echo "false" || echo "true")
+          if [ "$did_change" == "false" ]; then
+            echo "No changes to commit."
+          fi
+          echo ::set-output name=didChange::$did_change
 
       # - name: Install Gems and Pods
       #  run: bundle install && bundle exec pod install
@@ -49,7 +53,6 @@ jobs:
       - name: Push Changes and Create Pull Request
         if: ${{ steps.podfile.outputs.didChange == 'true' }}
         run: |
-          echo ${{ steps.podfile.outputs.didChange }}
           git commit -am "Update Gutenberg to $GBM_SHA" && git push origin $HEAD
           gh pr create \
           --title "${{ github.event.inputs.prTitle }}" \
