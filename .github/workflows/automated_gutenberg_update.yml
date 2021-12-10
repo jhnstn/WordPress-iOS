@@ -71,10 +71,10 @@ jobs:
         id: ios_pr
         #if: ${{ steps.bundle.outputs.didChange == 'true' }}
         run: |
-          git commit -am "Update Gutenberg to ${{steps.gbm_pr.outputs.gbm_sha}}" && git push origin $HEAD
+          git commit -am "Update Gutenberg to ${{steps.gbm_pr.outputs.sha}}" && git push origin $HEAD
           pr_url=$(gh pr create \
           --title "${{ github.event.inputs.prTitle }}" \
-          --body "${{ github.event.inputs.prBody }}" \\
+          --body "${{ github.event.inputs.prBody }}" \
           --base "${{ github.event.inputs.baseBranch }}" | tail -1)
           echo ::set-output name=url::$url
 
