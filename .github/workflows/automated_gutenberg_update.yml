@@ -37,8 +37,8 @@ jobs:
         run: |
           sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$GBM_SHA'/" Podfile
 
-      - name: Install Gems and Pods
-        run: bundle install && bundle exec pod install
+      # - name: Install Gems and Pods
+      #  run: bundle install && bundle exec pod install
 
       - name: Push Changes and Create Pull Request
         run: |
