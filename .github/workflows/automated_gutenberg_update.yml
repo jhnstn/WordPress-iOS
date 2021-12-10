@@ -41,7 +41,7 @@ jobs:
         run: |
           sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$GBM_SHA'/" Podfile
           # Exit if there are no changes
-          did_change=$(git diff --exit-code --quiet && echo "false" || echo "true")
+          did_change=$(git diff --exit-code && echo "false" || echo "true")
           if [ "$did_change" == "false" ]; then
             echo "No changes to commit."
           fi
