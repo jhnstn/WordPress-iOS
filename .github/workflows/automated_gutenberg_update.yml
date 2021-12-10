@@ -35,28 +35,29 @@ jobs:
         id: gbm_pr
         run: |
           sha_or_url=${{ github.event.inputs.gutenbergMobileShaOrPrUrl}}
-          echo $sha_or_url
-          if [[ $sha_or_url =~ '^https://github.com' ]] ;then
+          sha=$(echo $sha_or_url | xargs)
+
+          if [[ $sha_or_url =~ 'https://github.com' ]] ;then
             echo "found url!!!!"
             api_path=$( echo $sha_or_url | sed -E 's/https:\/\/github.com\/(.*)pull([0-9]*)/\1pulls\2' )
-            gbm_sha=$(gh api repos/$api_path  --jq '.head.sha')
-            echo ::set-output name=gbm_sha::$gbm_sha
-            echo ::set-output name=gbm_pr_url::$sha_or_url
-          else
-            gbm_sha=$(echo $sha_or_url | xargs)
+            sha=$(gh api repos/$api_path  --jq '.head.sha')
+            echo ::set-output name=url::$sha_or_url
           fi
-          echo $gbm_sha
-          echo ::set-output name=gbm_sha::$gbm_sha
+
+          echo $sha
+          echo ::set-output name=sha::$sha
         env:
           GITHUB_TOKEN: ${{ secrets.WORDPRESS_MOBILE_GITHUB_TOKEN }}
 
       - name: Checkout Branch
         run: |
+          git config pull.ff only
           git pull origin $HEAD && git switch $HEAD || git switch -c $HEAD
 
       - name: Update Podfile
         run: |
-          gbm_sha=${{ steps.gbm_pr.outputs.gbm_sha }}
+          gbm_sha=${{ steps.gbm_pr.outputs.sha }}
+          echo "sha? $gbm_sha"
           sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile
 
       - name: Install Gems and Pods
