@@ -69,7 +69,7 @@ jobs:
 
       - name: Push Changes and Create Pull Request
         id: ios_pr
-        if: ${{ steps.bundle.outputs.didChange == 'true' }}
+        #if: ${{ steps.bundle.outputs.didChange == 'true' }}
         run: |
           git commit -am "Update Gutenberg to ${{steps.gbm_pr.outputs.gbm_sha}}" && git push origin $HEAD
           pr_url=$(gh pr create \
