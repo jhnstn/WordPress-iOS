@@ -47,7 +47,7 @@ jobs:
       #  run: bundle install && bundle exec pod install
 
       - name: Push Changes and Create Pull Request
-        if: ${{ steps.podfile.outputs.didChange }}
+        if: ${{ steps.podfile.outputs.didChange == 'true' }}
         run: |
           echo ${{ steps.podfile.outputs.didChange }}
           git commit -am "Update Gutenberg to $GBM_SHA" && git push origin $HEAD
