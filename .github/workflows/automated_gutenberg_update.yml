@@ -38,14 +38,15 @@ jobs:
         run: |
           sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$GBM_SHA'/" Podfile
           # Exit if there are no changes
-           echo ::set-output name=didChange::$(git diff --exit-code --quiet && echo "true" || echo "false")
+           echo ::set-output name=didChange::$(git diff --exit-code --quiet && echo true || echo false)
 
       # - name: Install Gems and Pods
       #  run: bundle install && bundle exec pod install
 
       - name: Push Changes and Create Pull Request
-        if: ${{ contains(steps.podfile.outputs.didChange, 'true') }}
+        #if: ${{ contains(steps.podfile.outputs.didChange, 'true') }}
         run: |
+          echo ${{ steps.podfile.outputs.didChange }}
           git commit -am "Update Gutenberg to $GBM_SHA" && git push origin $HEAD
           gh pr create \
           --title "${{ github.event.inputs.prTitle }}" \
