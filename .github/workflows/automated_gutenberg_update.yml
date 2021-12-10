@@ -1,8 +1,8 @@
 on:
   workflow_dispatch:
     inputs:
-      gutenbergMobileSha:
-        description: "The SHA for the Mobile Gutenberg commit to build."
+      gutenbergMobileShaOrPrUrl:
+        description: "The SHA or PR Url for the Mobile Gutenberg commit to build."
         required: true
       prTitle:
         description: "The title of the pull request."
@@ -28,19 +28,30 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HEAD: ${{ github.event.inputs.headBranch }}
-      GBM_SHA: ${{ github.event.inputs.gutenbergMobileSha }}
     steps:
       - uses: actions/checkout@v2
+
+      - name: Find Gutenberg Mobile commit
+        id: gbm_pr
+        run: |
+          sha_or_url=${{ github.event.inputs.gutenbergMobileShaOrPrUrl}}
+          if [[ $sha_or_url =~ '^https://github.com' ]] ;then
+            gbm_sha=$(gh api repos/${sha_or_url#https://github.com/} --jq '.head.sha')
+          else
+            gbm_sha=$(echo $sha_or_url | xargs)
+          fi
+          echo ::set-output name=gbm_sha::$gbm_sha
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORDPRESS_MOBILE_GITHUB_TOKEN }}
 
       - name: Checkout Branch
         run: |
           git pull origin $HEAD && git switch $HEAD || git switch -c $HEAD
 
       - name: Update Podfile
-
         run: |
-          gbm_sha_trimmed=$(echo $GBM_SHA | xargs)
-          sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha_trimmed'/" Podfile
+          gbm_sha=${{ steps.gbm_pr.outputs.gbm_sha }}
+          sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile
 
       - name: Install Gems and Pods
         id: bundle
@@ -56,3 +67,10 @@ jobs:
           --title "${{ github.event.inputs.prTitle }}" \
           --body "${{ github.event.inputs.prBody }}" \
           --base "${{ github.event.inputs.baseBranch }}" || true
+
+      - name: Update Mobile Gutenberg PR
+        if: ${{ github.event.inputs.gutenbergMobilePR }}
+        run: |
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORDPRESS_MOBILE_GITHUB_TOKEN }}
