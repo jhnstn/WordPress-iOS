@@ -55,11 +55,12 @@ jobs:
           gbm_sha=${{ steps.gbm_pr.outputs.gbm_sha }}
           sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile
 
-      # - name: Install Gems and Pods
-      #   id: bundle
-      #   run: |
-      #     bundle install && bundle exec pod install
-      #     echo ::set-output name=didChange::$(git diff --exit-code && echo "false" || echo "true")
+      - name: Install Gems and Pods
+        if: ${{ false }}
+        id: bundle
+        run: |
+          bundle install && bundle exec pod install
+          echo ::set-output name=didChange::$(git diff --exit-code && echo "false" || echo "true")
 
       - name: Push Changes and Create Pull Request
         id: ios_pr
