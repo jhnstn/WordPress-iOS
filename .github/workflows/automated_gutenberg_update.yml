@@ -1,0 +1,51 @@
+on:
+  workflow_dispatch:
+    inputs:
+      gutenbergMobileSha:
+        description: "The SHA for the Mobile Gutenberg commit to build."
+        required: true
+      prTitle:
+        description: "The title of the pull request."
+        required: true
+      prBody:
+        description: "The body of the pull request."
+        required: true
+      headBranch:
+        description: "The branch to commit build changes."
+        required: true
+      baseBranch:
+        description: "The branch into which the build will be merged."
+        required: false
+        default: "develop"
+
+jobs:
+  update_gutenberg:
+    runs-on: macos-11
+    name: Update Gutenberg
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HEAD: ${{ github.event.inputs.headBranch }}
+      GBM_SHA: ${{ github.event.inputs.gutenbergMobileSha }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Checkout Branch
+        run: |
+          git switch $HEAD || git switch -c $HEAD
+
+      - name: Update Podfile
+        run: |
+          sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$GBM_SHA'/" Podfile
+
+      - name: Install Gems and Pods
+        run: bundle install && bundle exec pod install
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "Update Gutenberg Mobile to $GBM_SHA"
+          title: ${{ github.event.inputs.prTitle }}
+          body: ${{ github.event.inputs.prBody }}
+          branch: ${{ github.event.inputs.headBranch }}
+          base: ${{ github.event.inputs.baseBranch }}
+          delete-branch: true
