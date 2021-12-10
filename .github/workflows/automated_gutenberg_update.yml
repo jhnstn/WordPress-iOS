@@ -31,6 +31,7 @@ jobs:
 
       - name: Checkout Branch
         run: |
+          git fetch origin $HEAD
           git switch $HEAD || git switch -c $HEAD
 
       - name: Update Podfile
