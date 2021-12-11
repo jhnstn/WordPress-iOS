@@ -75,6 +75,8 @@ jobs:
           --title "${{ github.event.inputs.prTitle }}" \
           --body "${{ github.event.inputs.prBody }}" \
           --base "${{ github.event.inputs.baseBranch }}" | tail -1)
+          pr_result=$?
+          echo "url ? $url and result $pr_result"
           echo ::set-output name=url::$url
 
       - name: Update Mobile Gutenberg PR
