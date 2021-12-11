@@ -78,8 +78,10 @@ jobs:
           echo ::set-output name=url::$url
 
       - name: Update Mobile Gutenberg PR
-        if: ${{ steps.ios_pr.outputs.url && steps.gbm_pr.outputs.url }}
+        #if: ${{ steps.ios_pr.outputs.url && steps.gbm_pr.outputs.url }}
         run: |
+          echo "ios_pr url: ${{ steps.ios_pr.outputs.url }}"
+          echo "gbm_pr url: ${{ steps.gbm_pr.outputs.url }}"
           gh pr comment ${{ steps.gbm_pr.outputs.url }} --body "Sychronized iOS PR \n ${{ steps.ios_pr.outputs.url }}"
         env:
           GITHUB_TOKEN: ${{ secrets.WORDPRESS_MOBILE_GITHUB_TOKEN }}
