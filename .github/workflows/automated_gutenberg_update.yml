@@ -71,7 +71,7 @@ jobs:
         #if: ${{ steps.bundle.outputs.didChange == 'true' }}
         run: |
           git commit -am "Update Gutenberg to ${{steps.gbm_pr.outputs.sha}}" && git push origin $HEAD
-          pr_url=$(gh pr create \
+          url=$(gh pr create \
           --title "${{ github.event.inputs.prTitle }}" \
           --body "${{ github.event.inputs.prBody }}" \
           --base "${{ github.event.inputs.baseBranch }}" | tail -1)
@@ -82,6 +82,6 @@ jobs:
         run: |
           echo "ios_pr url: ${{ steps.ios_pr.outputs.url }}"
           echo "gbm_pr url: ${{ steps.gbm_pr.outputs.url }}"
-          gh pr comment ${{ steps.gbm_pr.outputs.url }} --body "Sychronized iOS PR \n ${{ steps.ios_pr.outputs.url }}"
+          gh pr comment ${{ steps.gbm_pr.outputs.url }} --body "Sychronized iOS PR ${{ steps.ios_pr.outputs.url }}"
         env:
           GITHUB_TOKEN: ${{ secrets.WORDPRESS_MOBILE_GITHUB_TOKEN }}
