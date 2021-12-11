@@ -38,7 +38,6 @@ jobs:
           sha=$(echo $sha_or_url | xargs)
 
           if [[ $sha_or_url =~ 'https://github.com' ]] ;then
-            echo "found url!!!!"
             api_path=$( echo $sha_or_url | sed -E 's/https:\/\/github.com\/(.*)pull([0-9]*)/\1pulls\2/' )
             sha=$(gh api repos/$api_path  --jq '.head.sha')
             echo ::set-output name=url::$sha_or_url
