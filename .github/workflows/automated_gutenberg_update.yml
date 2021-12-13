@@ -60,7 +60,6 @@ jobs:
           sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile
 
       - name: Install Gems and Pods
-        if: ${{ false }}
         id: bundle
         run: |
           bundle install && bundle exec pod install
@@ -68,7 +67,7 @@ jobs:
 
       - name: Push Changes and Create Pull Request
         id: ios_pr
-        #if: ${{ steps.bundle.outputs.didChange == 'true' }}
+        if: ${{ steps.bundle.outputs.didChange == 'true' }}
         run: |
           git commit -am "Update Gutenberg to ${{steps.gbm_pr.outputs.sha}}" && git push origin $HEAD
           url=$(gh pr create \
@@ -80,7 +79,7 @@ jobs:
           echo ::set-output name=url::$url
 
       - name: Update Mobile Gutenberg PR
-        #if: ${{ steps.ios_pr.outputs.url && steps.gbm_pr.outputs.url }}
+        if: ${{ steps.ios_pr.outputs.url && steps.gbm_pr.outputs.url }}
         run: |
           echo "ios_pr url: ${{ steps.ios_pr.outputs.url }}"
           echo "gbm_pr url: ${{ steps.gbm_pr.outputs.url }}"
