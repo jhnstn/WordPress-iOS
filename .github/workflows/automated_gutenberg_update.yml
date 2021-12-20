@@ -1,3 +1,4 @@
+name: automated_gutenberg_update
 on:
   workflow_dispatch:
     inputs:
