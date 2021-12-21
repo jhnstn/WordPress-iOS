@@ -86,7 +86,7 @@ def shared_with_extension_pods
 end
 
 def gutenberg(options)
-    options[:git] = 'https://github.com/jhnstn/gutenberg-mobile.git'
+    options[:git] = 'https://github.com/wordpress-mobile/gutenberg-mobile.git'
     options[:submodules] = true
     local_gutenberg = ENV['LOCAL_GUTENBERG']
     if local_gutenberg
@@ -145,7 +145,7 @@ def gutenberg_dependencies(options)
         podspec_prefix = options[:path]
     else
         tag_or_commit = options[:tag] || options[:commit]
-        podspec_prefix = "https://raw.githubusercontent.com/jhnstn/gutenberg-mobile/#{tag_or_commit}"
+        podspec_prefix = "https://raw.githubusercontent.com/wordpress-mobile/gutenberg-mobile/#{tag_or_commit}"
     end
 
     # FBReactNativeSpec needs special treatment because of react-native-codegen code generation

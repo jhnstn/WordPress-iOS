@@ -31,6 +31,8 @@ jobs:
       HEAD: ${{ github.event.inputs.headBranch }}
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.headBranch }}
 
       - name: Find Gutenberg Mobile commit
         id: gbm_pr
@@ -61,7 +63,7 @@ jobs:
       - name: Install Gems and Pods
         id: bundle
         run: |
-          bundle install && bundle exec pod install
+          bundle install && rake dependencies
           echo ::set-output name=didChange::$(git diff --exit-code && echo "false" || echo "true")
 
       - name: Push Changes and Create Pull Request
