@@ -52,22 +52,20 @@ jobs:
           git config pull.ff only
           git pull origin $HEAD && git switch $HEAD || git switch -c $HEAD
 
-      - name: Update Podfile
-        run: |
-          gbm_sha=${{ steps.gbm_pr.outputs.sha }}
-          sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile
+      - name: Update Gutenberg
+        id: update_gutenberg
+        uses: jhnstn/push-after-run@v1.0
+        with:
+          commit_message: "Update Gutenberg to ${{steps.gbm_pr.outputs.sha}}"
+          run: |
+            gbm_sha=${{ steps.gbm_pr.outputs.sha }}
+            sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile\
+            bundle install && rake dependencies
 
-      - name: Install Gems and Pods
-        id: bundle
-        run: |
-          bundle install && rake dependencies
-          echo ::set-output name=didChange::$(git diff --exit-code && echo "false" || echo "true")
-
-      - name: Push Changes and Create Pull Request
+      - name: Create Pull Request
         id: ios_pr
-        if: ${{ steps.bundle.outputs.didChange == 'true' }}
+        if: steps.update_gutenberg.outputs.changes_pushed == 'true' }}
         run: |
-          git commit -am "Update Gutenberg to ${{steps.gbm_pr.outputs.sha}}" && git push origin $HEAD
           url=$(gh pr create \
           --title "${{ github.event.inputs.prTitle }}" \
           --body "${{ github.event.inputs.prBody }}" \
@@ -80,8 +78,6 @@ jobs:
       - name: Update Mobile Gutenberg PR
         if: ${{ steps.ios_pr.outputs.url && steps.gbm_pr.outputs.url }}
         run: |
-          echo "ios_pr url: ${{ steps.ios_pr.outputs.url }}"
-          echo "gbm_pr url: ${{ steps.gbm_pr.outputs.url }}"
           gh pr comment ${{ steps.gbm_pr.outputs.url }} --body "Sychronized iOS PR ${{ steps.ios_pr.outputs.url }}"
         env:
           GITHUB_TOKEN: ${{ secrets.WORDPRESS_MOBILE_GITHUB_TOKEN }}
