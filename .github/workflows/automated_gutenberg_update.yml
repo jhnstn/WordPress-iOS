@@ -64,7 +64,7 @@ jobs:
 
       - name: Create Pull Request
         id: ios_pr
-        if: steps.update_gutenberg.outputs.changes_pushed == 'true' }}
+        if: steps.update_gutenberg.outputs.changes_pushed == 'true'
         run: |
           url=$(gh pr create \
           --title "${{ github.event.inputs.prTitle }}" \
