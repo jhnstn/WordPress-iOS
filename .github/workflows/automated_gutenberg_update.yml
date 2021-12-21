@@ -59,7 +59,7 @@ jobs:
           commit_message: "Update Gutenberg to ${{steps.gbm_pr.outputs.sha}}"
           run: |
             gbm_sha=${{ steps.gbm_pr.outputs.sha }}
-            sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile\
+            sed -i '' -E "s/gutenberg :(commit|tag) => '(.*)'/gutenberg :commit => '$gbm_sha'/" Podfile
             bundle install && rake dependencies
 
       - name: Create Pull Request
