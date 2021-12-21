@@ -31,9 +31,6 @@ jobs:
       HEAD: ${{ github.event.inputs.headBranch }}
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.inputs.headBranch }}
-
       - name: Find Gutenberg Mobile commit
         id: gbm_pr
         run: |
